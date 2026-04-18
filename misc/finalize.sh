@@ -10,6 +10,7 @@ apt_get_with_lock upgrade -y
 # Remove not needed packages
 apt_get_with_lock autoremove -y
 
+# Write installed version
 echo "$set_pheme_version" > "/var/pheme/pheme_version.txt"
 chown pheme:pheme "/var/pheme/pheme_version.txt"
 
@@ -18,10 +19,3 @@ ENV_FILE=/var/pheme/www/pheme.env
 touch "$ENV_FILE"
 chown pheme:pheme "$ENV_FILE"
 echo "ENABLE_WEB_UPDATER=false" >> "$ENV_FILE"
-
-if [ "$pheme_git_version" = "scy" ]; then
-    echo "NOW_PLAYING_MAX_CONCURRENT_PROCESSES=1" >> "$ENV_FILE"
-fi
-
-# Update Icecast to latest Version
-source tools/icecastkh/update_latest.sh || { echo "Error sourcing tools/icecastkh/update_latest.sh"; exit 1; }
