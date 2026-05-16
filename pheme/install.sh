@@ -5,11 +5,11 @@
 ##############################################################################
 
 # Clone and checkout Pheme stable branch
-su pheme <<EOF
+su pheme <<SUEOF
     git clone https://github.com/ashd0wn/pheme.git /var/pheme/www
     git -C /var/pheme/www checkout -f ${set_pheme_version}-org
     composer --working-dir=/var/pheme/www install --no-dev --no-ansi --no-interaction
-EOF
+SUEOF
 
 # Directories 0755
 find /var/pheme/www -type d -exec chmod 755 {} \;
@@ -18,7 +18,8 @@ find /var/pheme/www -type d -exec chmod 755 {} \;
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
 # Populate env.ini
-echo "
+cat >> /var/pheme/www/env.ini << ENVEOF
+
 ;
 ; Pheme Environment Settings
 ;
@@ -32,7 +33,7 @@ MYSQL_PORT = 3306
 MYSQL_USER = phemeMySQLUsername
 MYSQL_DB = phemeMySQLDatabase
 MYSQL_PASSWORD = phemeMySQLPassword
-" >> /var/pheme/www/env.ini
+ENVEOF
 
 # Inject DB credentials
 sed -i "s/phemeMySQLDatabase/$set_pheme_database/g" /var/pheme/www/env.ini
@@ -46,6 +47,17 @@ chown pheme:pheme /var/pheme/www/env.ini
 # Migrate DB
 supervisorctl restart redis
 supervisorctl restart mariadb
+
+# Attendre que MariaDB soit prêt à accepter des connexions
+echo -en "\n- Attente MariaDB...\n"
+for i in $(seq 1 30); do
+    if mysqladmin ping -u root --silent 2>/dev/null; then
+        echo "MariaDB pret apres ${i}s"
+        break
+    fi
+    sleep 1
+done
+
 php /var/pheme/www/bin/console pheme:setup:migrate
 supervisorctl stop mariadb
 
