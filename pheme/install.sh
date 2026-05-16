@@ -13,12 +13,10 @@ SUEOF
 
 # Directories 0755
 find /var/pheme/www -type d -exec chmod 755 {} \;
-
 # Files 0644
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
-# Écrire env.ini dans /var/pheme/ (parent de /var/pheme/www)
-# C'est là que l'app le cherche via getParentDirectory()
+# Écrire env.ini dans /var/pheme/ (getParentDirectory() = parent de /var/pheme/www)
 cat > /var/pheme/env.ini << ENVEOF
 ;
 ; Pheme Environment Settings
@@ -35,31 +33,38 @@ MYSQL_DB = phemeMySQLDatabase
 MYSQL_PASSWORD = phemeMySQLPassword
 ENVEOF
 
-# Inject DB credentials
 sed -i "s/phemeMySQLDatabase/$set_pheme_database/g" /var/pheme/env.ini
 sed -i "s/phemeMySQLUsername/$set_pheme_username/g" /var/pheme/env.ini
 sed -i "s/phemeMySQLPassword/$set_pheme_password/g" /var/pheme/env.ini
 
-# Secure env.ini
 chmod 0640 /var/pheme/env.ini
 chown pheme:pheme /var/pheme/env.ini
 
-# Migrate DB
+# Démarrer Redis pour la migration
 supervisorctl restart redis
-supervisorctl restart mariadb
+
+# Démarrer MariaDB via systemd (pas via Supervisor à ce stade)
+systemctl start mariadb
 
 # Attendre que MariaDB soit prêt
 echo -en "\n- Attente MariaDB...\n"
 for i in $(seq 1 30); do
-    if mysqladmin ping -u root --silent 2>/dev/null; then
+    if mariadb-admin ping --silent 2>/dev/null; then
         echo "MariaDB pret apres ${i}s"
         break
     fi
     sleep 1
 done
 
+# Lancer la migration
 php /var/pheme/www/bin/console pheme:setup:migrate
-supervisorctl stop mariadb
+
+# Arrêter MariaDB systemd — Supervisor prend le relais
+systemctl stop mariadb
+sleep 2
+
+# Démarrer via Supervisor
+supervisorctl start mariadb
 
 # Build frontend
 echo -en "\n- Build Pheme\n"
