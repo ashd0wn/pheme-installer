@@ -6,7 +6,7 @@
 
 # Clone and checkout Pheme stable branch
 su pheme <<EOF
-    git clone https://github.com/ashd0wn/Pheme.git /var/pheme/www
+    git clone https://github.com/ashd0wn/pheme.git /var/pheme/www
     git -C /var/pheme/www checkout -f ${set_pheme_version}-org
     composer --working-dir=/var/pheme/www install --no-dev --no-ansi --no-interaction
 EOF
