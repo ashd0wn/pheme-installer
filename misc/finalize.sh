@@ -14,8 +14,8 @@ apt_get_with_lock autoremove -y
 echo "$set_pheme_version" > "/var/pheme/pheme_version.txt"
 chown pheme:pheme "/var/pheme/pheme_version.txt"
 
-# Pheme ENV Variables
-ENV_FILE=/var/pheme/www/pheme.env
+# Pheme ENV Variables — écrit dans /var/pheme/pheme.env (getParentDirectory())
+ENV_FILE=/var/pheme/pheme.env
 touch "$ENV_FILE"
 chown pheme:pheme "$ENV_FILE"
 echo "ENABLE_WEB_UPDATER=false" >> "$ENV_FILE"
