@@ -17,9 +17,9 @@ find /var/pheme/www -type d -exec chmod 755 {} \;
 # Files 0644
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
-# Populate env.ini
-cat >> /var/pheme/www/env.ini << ENVEOF
-
+# Écrire env.ini dans /var/pheme/ (parent de /var/pheme/www)
+# C'est là que l'app le cherche via getParentDirectory()
+cat > /var/pheme/env.ini << ENVEOF
 ;
 ; Pheme Environment Settings
 ;
@@ -36,19 +36,19 @@ MYSQL_PASSWORD = phemeMySQLPassword
 ENVEOF
 
 # Inject DB credentials
-sed -i "s/phemeMySQLDatabase/$set_pheme_database/g" /var/pheme/www/env.ini
-sed -i "s/phemeMySQLUsername/$set_pheme_username/g" /var/pheme/www/env.ini
-sed -i "s/phemeMySQLPassword/$set_pheme_password/g" /var/pheme/www/env.ini
+sed -i "s/phemeMySQLDatabase/$set_pheme_database/g" /var/pheme/env.ini
+sed -i "s/phemeMySQLUsername/$set_pheme_username/g" /var/pheme/env.ini
+sed -i "s/phemeMySQLPassword/$set_pheme_password/g" /var/pheme/env.ini
 
 # Secure env.ini
-chmod 0640 /var/pheme/www/env.ini
-chown pheme:pheme /var/pheme/www/env.ini
+chmod 0640 /var/pheme/env.ini
+chown pheme:pheme /var/pheme/env.ini
 
 # Migrate DB
 supervisorctl restart redis
 supervisorctl restart mariadb
 
-# Attendre que MariaDB soit prêt à accepter des connexions
+# Attendre que MariaDB soit prêt
 echo -en "\n- Attente MariaDB...\n"
 for i in $(seq 1 30); do
     if mysqladmin ping -u root --silent 2>/dev/null; then
