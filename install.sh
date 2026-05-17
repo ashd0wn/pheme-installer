@@ -17,21 +17,6 @@ if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
     exit 1
 fi
 
-# Generate random passwords
-mysql_root_pass=$(
-    head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16
-    echo ''
-)
-
-generate_pheme_username=$(
-    head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16
-    echo ''
-)
-
-generate_pheme_password=$(
-    head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16
-    echo ''
-)
 
 ### Global Installer Options
 # Installer Home
@@ -40,14 +25,30 @@ installerHome=$PWD
 # Misc Options
 set_php_version="8.2"
 
-# Pheme Database name cannot be changed.
-# The migrate function does not support custom DB names.
-set_pheme_database=pheme
-set_pheme_username=$generate_pheme_username
-set_pheme_password=$generate_pheme_password
-
 # Pheme Version
 set_pheme_version="0.19.1"
+
+# Générer les credentials et les écrire dans un fichier temporaire sécurisé
+# Tous les sous-scripts lisent depuis ce fichier — pas de dépendance aux variables shell
+PHEME_CREDS_FILE="$installerHome/.pheme_credentials"
+
+cat > "$PHEME_CREDS_FILE" << CREDSEOF
+PHEME_DB_NAME=pheme
+PHEME_DB_USER=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16)
+PHEME_DB_PASS=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16)
+PHEME_MYSQL_ROOT_PASS=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16)
+CREDSEOF
+
+chmod 600 "$PHEME_CREDS_FILE"
+
+# Charger les credentials dans le shell courant
+source "$PHEME_CREDS_FILE"
+
+# Aliases pour compatibilité avec le reste des scripts
+set_pheme_database="$PHEME_DB_NAME"
+set_pheme_username="$PHEME_DB_USER"
+set_pheme_password="$PHEME_DB_PASS"
+mysql_root_pass="$PHEME_MYSQL_ROOT_PASS"
 
 # Commands
 LONGOPTS=help,version,install,changeports,clean
