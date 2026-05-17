@@ -16,7 +16,7 @@ find /var/pheme/www -type d -exec chmod 755 {} \;
 # Files 0644
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
-# Écrire env.ini dans /var/pheme/ (getParentDirectory() = parent de /var/pheme/www)
+# Écrire env.ini dans /var/pheme/ (getParentDirectory())
 cat > /var/pheme/env.ini << ENVEOF
 ;
 ; Pheme Environment Settings
@@ -40,10 +40,10 @@ sed -i "s/phemeMySQLPassword/$set_pheme_password/g" /var/pheme/env.ini
 chmod 0640 /var/pheme/env.ini
 chown pheme:pheme /var/pheme/env.ini
 
-# Démarrer Redis pour la migration
+# Démarrer Redis
 supervisorctl restart redis
 
-# Démarrer MariaDB via systemd (pas via Supervisor à ce stade)
+# Démarrer MariaDB via systemd pour la migration
 systemctl start mariadb
 
 # Attendre que MariaDB soit prêt
@@ -56,14 +56,29 @@ for i in $(seq 1 30); do
     sleep 1
 done
 
-# Lancer la migration
+# Parser env.ini et exporter les variables dans l'environnement courant
+# AppFactory::buildEnvironment() utilise getenv() — les vars doivent être
+# dans l'environnement du processus PHP, pas juste dans un fichier
+echo -en "\n- Chargement des variables depuis env.ini...\n"
+while IFS='=' read -r key value; do
+    # Ignorer commentaires et sections [...]
+    [[ "$key" =~ ^[[:space:]]*[;#] ]] && continue
+    [[ "$key" =~ ^\[ ]] && continue
+    [[ -z "$key" ]] && continue
+    # Nettoyer les espaces et guillemets
+    key=$(echo "$key" | tr -d ' ')
+    value=$(echo "$value" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr -d '"')
+    export "$key=$value"
+done < /var/pheme/env.ini
+
+echo "MYSQL_USER=$MYSQL_USER MYSQL_DB=$MYSQL_DB MYSQL_HOST=$MYSQL_HOST"
+
+# Lancer la migration avec les variables exportées
 php /var/pheme/www/bin/console pheme:setup:migrate
 
 # Arrêter MariaDB systemd — Supervisor prend le relais
 systemctl stop mariadb
 sleep 2
-
-# Démarrer via Supervisor
 supervisorctl start mariadb
 
 # Build frontend
