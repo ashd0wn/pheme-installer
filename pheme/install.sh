@@ -19,7 +19,7 @@ find /var/pheme/www -type d -exec chmod 755 {} \;
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
 # Écrire env.ini
-cat > /var/pheme/www/env.ini << ENVEOF
+cat > /var/pheme/env.ini << ENVEOF
 
 ;
 ; Pheme Environment Settings
@@ -34,8 +34,8 @@ MYSQL_DB = $PHEME_DB_NAME
 MYSQL_PASSWORD = $PHEME_DB_PASS
 ENVEOF
 
-chmod 0640 /var/pheme/www/env.ini
-chown pheme:pheme /var/pheme/www/env.ini
+chmod 0640 /var/pheme/env.ini
+chown pheme:pheme /var/pheme/env.ini
 
 # Démarrer Redis
 supervisorctl restart redis
