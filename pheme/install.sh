@@ -15,7 +15,7 @@ SUEOF
 find /var/pheme/www -type d -exec chmod 755 {} \;
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
-# Écrire env.ini dans /var/pheme/www/ (là où le script le trouve toujours)
+# Écrire env.ini
 cat > /var/pheme/www/env.ini << ENVEOF
 
 ;
@@ -54,17 +54,25 @@ for i in $(seq 1 30); do
     sleep 1
 done
 
-# Passer les credentials directement en variables d'environnement à PHP
-# AppFactory::buildEnvironment() fait getenv() — on injecte directement
-MYSQL_HOST=localhost \
-MYSQL_PORT=3306 \
-MYSQL_USER="$set_pheme_username" \
-MYSQL_DB="$set_pheme_database" \
-MYSQL_PASSWORD="$set_pheme_password" \
-APPLICATION_ENV=production \
-php /var/pheme/www/bin/console pheme:setup:migrate
+# Lancer la migration
+# install.sh est sourcé donc on exporte les vars dans le shell courant
+# puis on les passe explicitement à PHP via env(1)
+export PHEME_DB_HOST="localhost"
+export PHEME_DB_PORT="3306"
+export PHEME_DB_USER="$set_pheme_username"
+export PHEME_DB_NAME="$set_pheme_database"
+export PHEME_DB_PASS="$set_pheme_password"
 
-# Passer le relais à Supervisor pour MariaDB
+env \
+    MYSQL_HOST="$PHEME_DB_HOST" \
+    MYSQL_PORT="$PHEME_DB_PORT" \
+    MYSQL_USER="$PHEME_DB_USER" \
+    MYSQL_DB="$PHEME_DB_NAME" \
+    MYSQL_PASSWORD="$PHEME_DB_PASS" \
+    APPLICATION_ENV=production \
+    php /var/pheme/www/bin/console pheme:setup:migrate
+
+# Passer le relais à Supervisor
 systemctl stop mariadb
 sleep 2
 supervisorctl start mariadb
