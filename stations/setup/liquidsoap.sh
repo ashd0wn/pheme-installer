@@ -16,7 +16,7 @@ apt_get_with_lock install -y --no-install-recommends "${PACKAGES[@]}"
 UBUNTU_CODENAME=$(lsb_release -cs 2>/dev/null || echo "noble")
 ARCHITECTURE=$(dpkg --print-architecture | awk -F- '{ print $NF }')
 
-LIQUIDSOAP_VERSION="2.4.1"
+LIQUIDSOAP_VERSION="2.4.4"
 LIQUIDSOAP_DEB_URL="https://github.com/savonet/liquidsoap/releases/download/v${LIQUIDSOAP_VERSION}/liquidsoap_${LIQUIDSOAP_VERSION}-ubuntu-${UBUNTU_CODENAME}-ocaml5.4.0-1_${ARCHITECTURE}.deb"
 
 echo "Téléchargement Liquidsoap ${LIQUIDSOAP_VERSION} pour ${UBUNTU_CODENAME}/${ARCHITECTURE}..."

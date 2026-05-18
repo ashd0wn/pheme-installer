@@ -3,7 +3,6 @@
 CENTRIFUGO_VERSION="5.4.8"
 ARCHITECTURE=$(dpkg --print-architecture | awk -F- '{ print $NF }')
 
-# Mapper l'architecture Debian vers celle de GitHub releases
 case "$ARCHITECTURE" in
     amd64) ARCH="amd64" ;;
     arm64) ARCH="arm64" ;;
@@ -19,8 +18,8 @@ mv /tmp/centrifugo /usr/local/bin/centrifugo
 chmod +x /usr/local/bin/centrifugo
 rm -f /tmp/centrifugo.tar.gz
 
-# Vérifier
 centrifugo version
 
-# Copier la config
-cp web/centrifugo/config.json /var/pheme/centrifugo/config.json
+# Copier la config avec chemin absolu depuis installerHome
+cp "$installerHome/web/centrifugo/config.json" /var/pheme/centrifugo/config.json
+chown pheme:pheme /var/pheme/centrifugo/config.json
