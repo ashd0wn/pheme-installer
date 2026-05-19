@@ -9,17 +9,17 @@ case "$ARCHITECTURE" in
     *)     ARCH="amd64" ;;
 esac
 
-echo "Téléchargement Centrifugo ${CENTRIFUGO_VERSION}..."
 CENTRIFUGO_URL="https://github.com/centrifugal/centrifugo/releases/download/v${CENTRIFUGO_VERSION}/centrifugo_${CENTRIFUGO_VERSION}_linux_${ARCH}.tar.gz"
 
-wget -O /tmp/centrifugo.tar.gz "$CENTRIFUGO_URL"
+echo "Téléchargement Centrifugo ${CENTRIFUGO_VERSION}..."
+curl -L --retry 3 --output /tmp/centrifugo.tar.gz "$CENTRIFUGO_URL"
+
 tar -xzf /tmp/centrifugo.tar.gz -C /tmp centrifugo
 mv /tmp/centrifugo /usr/local/bin/centrifugo
 chmod +x /usr/local/bin/centrifugo
 rm -f /tmp/centrifugo.tar.gz
 
-centrifugo version
+echo "Centrifugo version : $(/usr/local/bin/centrifugo version 2>/dev/null || echo 'inconnue')"
 
-# Copier la config avec chemin absolu depuis installerHome
 cp "$installerHome/web/centrifugo/config.json" /var/pheme/centrifugo/config.json
 chown pheme:pheme /var/pheme/centrifugo/config.json
