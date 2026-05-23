@@ -11,21 +11,21 @@ PACKAGES=(
 apt_get_with_lock update
 apt_get_with_lock install -y --no-install-recommends "${PACKAGES[@]}"
 
-LIQUIDSOAP_VERSION="2.4.4"
+# Liquidsoap 2.2.5 — dernière version 2.2.x compatible avec Pheme/AzuraCast 0.19.1
+# Liquidsoap 2.4.x introduit des breaking changes (paramètre synchronous obligatoire)
+# qui nécessitent des modifications du code PHP pour être supportés
+LIQUIDSOAP_VERSION="2.2.5"
 ARCHITECTURE=$(dpkg --print-architecture | awk -F- '{ print $NF }')
 UBUNTU_CODENAME=$(lsb_release -cs 2>/dev/null || echo "noble")
 
-# Les assets permanents sont sur savonet/liquidsoap-release-assets
-# Le nom exact du fichier pour ubuntu noble :
-# liquidsoap_2.4.4-ubuntu-noble-ocaml5.4.0-1_amd64.deb
-LIQUIDSOAP_URL="https://github.com/savonet/liquidsoap-release-assets/releases/download/v${LIQUIDSOAP_VERSION}/liquidsoap_${LIQUIDSOAP_VERSION}-ubuntu-${UBUNTU_CODENAME}-ocaml5.4.0-1_${ARCHITECTURE}.deb"
+LIQUIDSOAP_URL="https://github.com/savonet/liquidsoap-release-assets/releases/download/v${LIQUIDSOAP_VERSION}/liquidsoap_${LIQUIDSOAP_VERSION}-ubuntu-${UBUNTU_CODENAME}-ocaml5.2.0-1_${ARCHITECTURE}.deb"
 
 echo "Téléchargement Liquidsoap ${LIQUIDSOAP_VERSION} (${UBUNTU_CODENAME}/${ARCHITECTURE})..."
 curl -L --retry 3 --output /tmp/liquidsoap.deb "$LIQUIDSOAP_URL"
 
 if [ $? -ne 0 ] || [ ! -s /tmp/liquidsoap.deb ]; then
     echo "Fallback: tentative avec noble..."
-    LIQUIDSOAP_URL="https://github.com/savonet/liquidsoap-release-assets/releases/download/v${LIQUIDSOAP_VERSION}/liquidsoap_${LIQUIDSOAP_VERSION}-ubuntu-noble-ocaml5.4.0-1_${ARCHITECTURE}.deb"
+    LIQUIDSOAP_URL="https://github.com/savonet/liquidsoap-release-assets/releases/download/v${LIQUIDSOAP_VERSION}/liquidsoap_${LIQUIDSOAP_VERSION}-ubuntu-noble-ocaml5.2.0-1_${ARCHITECTURE}.deb"
     curl -L --retry 3 --output /tmp/liquidsoap.deb "$LIQUIDSOAP_URL"
 fi
 
