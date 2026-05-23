@@ -87,9 +87,8 @@ Centrifugo     ← WebSocket real-time updates
 ```bash
 mkdir /root/pheme_installer \
   && cd /root/pheme_installer \
-  && git clone https://github.com/ashd0wn/Pheme-Installer.git . \
-  && git checkout 0.19.1 \
-  && chmod -R +x ./* \
+  && git clone https://github.com/ashd0wn/pheme-installer.git . \
+  && chmod +x install.sh \
   && ./install.sh -i
 ```
 
@@ -110,8 +109,7 @@ tail -f /root/pheme_installer/pheme_installer.log
 ```bash
 mkdir /root/pheme_installer \
   && cd /root/pheme_installer \
-  && git clone https://github.com/ashd0wn/Pheme-Installer.git . \
-  && git checkout main \
+  && git clone https://github.com/ashd0wn/pheme-installer.git . \
   && chmod +x install.sh \
   && ./install.sh --install_rrc
 ```
@@ -128,9 +126,8 @@ mkdir /root/pheme_installer \
 rm -rf /root/pheme_installer \
   && mkdir -p /root/pheme_installer \
   && cd /root/pheme_installer \
-  && git clone https://github.com/ashd0wn/Pheme-Installer.git . \
-  && git checkout 0.19.1 \
-  && chmod -R +x ./* \
+  && git clone https://github.com/ashd0wn/pheme-installer.git . \
+  && chmod +x install.sh \
   && ./install.sh --upgrade
 ```
 
@@ -140,7 +137,7 @@ rm -rf /root/pheme_installer \
 rm -rf /root/pheme_installer \
   && mkdir -p /root/pheme_installer \
   && cd /root/pheme_installer \
-  && git clone https://github.com/ashd0wn/Pheme-Installer.git . \
+  && git clone https://github.com/ashd0wn/pheme-installer.git . \
   && git checkout rolling \
   && chmod +x install.sh \
   && ./install.sh --upgrade_rrc

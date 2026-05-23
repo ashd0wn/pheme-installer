@@ -3,7 +3,7 @@
 ### Description: Install Pheme
 ### OS: Ubuntu 22.04 LTS
 ### Run this script as root only
-### mkdir /root/pheme_installer && cd /root/pheme_installer && git clone https://github.com/ashd0wn/Pheme-Installer.git . && chmod +x install.sh && ./install.sh -i
+### mkdir /root/pheme_installer && cd /root/pheme_installer && git clone https://github.com/ashd0wn/pheme-installer.git . && chmod +x install.sh && ./install.sh -i
 
 ##############################################################################
 # Pheme Installer
