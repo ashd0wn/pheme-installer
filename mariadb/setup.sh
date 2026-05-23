@@ -2,6 +2,7 @@
 
 ##############################################################################
 # setup_mariadb
+# Etape 3 — Supervisor pas encore installé, on utilise systemctl
 ##############################################################################
 
 source "$installerHome/.pheme_credentials"
@@ -12,14 +13,8 @@ apt_get_with_lock install -y wget software-properties-common dirmngr ca-certific
 curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-$set_mariadb_version"
 apt_get_with_lock install -y mariadb-server mariadb-client
 
-# Désactiver systemd dès le début — Supervisor gère MariaDB
-systemctl disable mariadb 2>/dev/null || true
-systemctl stop mariadb 2>/dev/null || true
-pkill -f mysqld 2>/dev/null || true
-sleep 2
-
-# Démarrer via Supervisor
-supervisorctl start mariadb
+# Démarrer via systemctl pour cette étape
+systemctl start mariadb
 
 # Attendre que MariaDB soit prêt
 echo "Attente MariaDB..."
@@ -48,3 +43,10 @@ fi
 # Sécuriser root EN DERNIER
 sed -i "s/changeToMySQLRootPW/$PHEME_MYSQL_ROOT_PASS/g" "$installerHome/mariadb/config/mysql_secure_installation.sql"
 mariadb -u root < "$installerHome/mariadb/config/mysql_secure_installation.sql"
+
+# Désactiver systemd et stopper MariaDB PROPREMENT
+# Supervisor prendra le relais à l'étape 8
+systemctl disable mariadb
+systemctl stop mariadb
+pkill -f mysqld 2>/dev/null || true
+sleep 2

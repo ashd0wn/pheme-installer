@@ -2,6 +2,7 @@
 
 ##############################################################################
 # setup_pheme_install
+# Etape 9 — Supervisor installé, on utilise supervisorctl
 ##############################################################################
 
 source "$installerHome/.pheme_credentials"
@@ -17,7 +18,7 @@ SUEOF
 find /var/pheme/www -type d -exec chmod 755 {} \;
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
-# Écrire env.ini dans /var/pheme/www/ (là où AppFactory le cherche)
+# Écrire env.ini
 cat > /var/pheme/www/env.ini << ENVEOF
 
 ;
@@ -36,7 +37,7 @@ ENVEOF
 chmod 0640 /var/pheme/www/env.ini
 chown pheme:pheme /var/pheme/www/env.ini
 
-# Redémarrer Redis et MariaDB via Supervisor uniquement
+# Redémarrer Redis et MariaDB via Supervisor
 supervisorctl restart redis
 supervisorctl restart mariadb
 
