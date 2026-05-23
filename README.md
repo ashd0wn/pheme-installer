@@ -14,7 +14,7 @@
 [![Ubuntu 22.04](https://img.shields.io/badge/Ubuntu-22.04_LTS-E95420?style=flat-square&logo=ubuntu&logoColor=white)](https://ubuntu.com)
 [![Based on AzuraCast](https://img.shields.io/badge/Based_on-AzuraCast_0.19.1-4A90D9?style=flat-square)](https://github.com/AzuraCast/AzuraCast)
 [![License](https://img.shields.io/badge/License-GPL_3.0-green?style=flat-square)](LICENSE)
-[![Runs on 1vCPU / 2GB](https://img.shields.io/badge/Runs_on-1_vCPU_%2F_2GB_RAM-yellow?style=flat-square)](#configuration-minimale)
+[![Runs on 1vCPU / 2GB](https://img.shields.io/badge/Runs_on-1_vCPU_%2F_2GB_RAM-yellow?style=flat-square)](#minimum-requirements)
 
 *Named after Pheme — goddess of voice, rumor, and renown in ancient Greece.*
 
@@ -66,23 +66,21 @@ Centrifugo     ← WebSocket real-time updates
 
 ---
 
-## Configuration minimale
+## Minimum requirements
 
-| Ressource | Minimum | Recommandé |
-|-----------|---------|------------|
+| Resource | Minimum | Recommended |
+|----------|---------|-------------|
 | CPU | 1 vCPU | 2 vCPU |
 | RAM | 2 GB | 4 GB |
-| Disque | 20 GB | 40 GB+ |
+| Disk | 20 GB | 40 GB+ |
 | OS | Ubuntu 22.04 LTS | Ubuntu 22.04 LTS |
-| Réseau | 10 Mbps | 100 Mbps+ |
+| Network | 10 Mbps | 100 Mbps+ |
 
-> Pheme tourne sans erreur sur des VPS d'entrée de gamme chez OVH, Hetzner et DigitalOcean.
+> Pheme runs without issues on entry-level VPS instances at OVH, Hetzner and DigitalOcean.
 
 ---
 
 ## Installation
-
-### Stable (0.19.1)
 
 ```bash
 mkdir /root/pheme_installer \
@@ -92,11 +90,11 @@ mkdir /root/pheme_installer \
   && ./install.sh -i
 ```
 
-> ⚠️ **Un redémarrage est obligatoire après l'installation.**  
-> Sans reboot, vous obtiendrez une erreur 500 au premier accès.
+> ⚠️ **A reboot is required after installation.**  
+> Without a reboot, you will get a 500 error on first access.
 
-L'installation prend **environ 20 à 30 minutes** selon votre connexion et votre machine.  
-Les logs sont disponibles en temps réel dans un second terminal :
+Installation takes **approximately 20 to 30 minutes** depending on your connection and machine.  
+You can follow the logs in real time in a second terminal:
 
 ```bash
 tail -f /root/pheme_installer/pheme_installer.log
@@ -104,123 +102,58 @@ tail -f /root/pheme_installer/pheme_installer.log
 
 ---
 
-### Rolling Release (dernière version en cours)
-
-```bash
-mkdir /root/pheme_installer \
-  && cd /root/pheme_installer \
-  && git clone https://github.com/ashd0wn/pheme-installer.git . \
-  && chmod +x install.sh \
-  && ./install.sh --install_rrc
-```
-
-> ⚠️ Non recommandé en production. La rolling release peut introduire des dépendances cassantes.
-
----
-
-## Mise à jour
-
-### De 0.18.6 vers 0.19.1
-
-```bash
-rm -rf /root/pheme_installer \
-  && mkdir -p /root/pheme_installer \
-  && cd /root/pheme_installer \
-  && git clone https://github.com/ashd0wn/pheme-installer.git . \
-  && chmod +x install.sh \
-  && ./install.sh --upgrade
-```
-
-### Rolling Release
-
-```bash
-rm -rf /root/pheme_installer \
-  && mkdir -p /root/pheme_installer \
-  && cd /root/pheme_installer \
-  && git clone https://github.com/ashd0wn/pheme-installer.git . \
-  && git checkout rolling \
-  && chmod +x install.sh \
-  && ./install.sh --upgrade_rrc
-```
-
-> Les mises à jour rolling ne sont pas garanties si de nouvelles dépendances système sont introduites. Si vous n'êtes pas à l'aise en CLI, restez sur la version stable.
-
----
-
-## Commandes disponibles
+## Available commands
 
 ```
 ./install.sh [option]
 ```
 
-**Installation / Mise à jour**
+**Installation**
 
 | Option | Description |
 |--------|-------------|
-| `-i`, `--install` | Installer la dernière version stable |
-| `-u`, `--upgrade` | Mettre à jour vers la dernière version stable |
-| `-r`, `--install_rrc` | Installer la dernière Rolling Release |
-| `-p`, `--upgrade_rrc` | Mettre à jour vers la dernière Rolling Release |
+| `-i`, `--install` | Install Pheme |
 
-**Gestion de Pheme**
+**Maintenance**
 
 | Option | Description |
 |--------|-------------|
-| `-c`, `--clean` | Vider le dossier `www_tmp` de Pheme |
-| `-o`, `--changeports` | Modifier les ports du panel Pheme |
+| `-c`, `--clean` | Clear Pheme's `www_tmp` directory |
+| `-o`, `--changeports` | Change the ports the Pheme panel runs on |
 
-**Icecast KH**
-
-| Option | Description |
-|--------|-------------|
-| `-w`, `--icecastkh18` | Installer / mettre à jour vers Icecast KH 18 |
-| `-t`, `--icecastkhlatest` | Installer / mettre à jour vers la dernière build GitHub |
-| `-s`, `--icecastkhmaster` | Installer depuis la branche master |
-
-**Liquidsoap**
-
-> Pour Pheme ≥ 0.18.5 : Liquidsoap **2.2.x ou supérieur**.  
-> Pour Pheme < 0.18.5 : Liquidsoap **< 2.2.x** (dernière version compatible : 2.1.4).
+**Info**
 
 | Option | Description |
 |--------|-------------|
-| `-n`, `--liquidsoaplatest` | Installer / mettre à jour vers la dernière version |
-| `-m`, `--liquidsoapcustom` | Installer une version spécifique |
-
-**Divers**
-
-| Option | Description |
-|--------|-------------|
-| `-z`, `--upgrade_installer` | Mettre à jour l'installeur lui-même |
-| `-v`, `--version` | Afficher les informations de version |
-| `-h`, `--help` | Afficher l'aide |
+| `-v`, `--version` | Display version information |
+| `-h`, `--help` | Display help |
 
 ---
 
-## Après l'installation
+## After installation
 
-À la fin de l'installation, les identifiants de connexion sont affichés dans le terminal **et sauvegardés** dans :
+At the end of the installation, your login credentials are saved to:
 
 ```
 /root/pheme_installer/pheme_details.txt
 ```
 
-Pensez à **supprimer ce dossier** une fois vos credentials notés :
+Make sure to **delete this folder** once you have noted your credentials:
 
 ```bash
 rm -rf /root/pheme_installer
 ```
 
-Le panel est accessible à l'adresse : `http://<votre-ip-ou-domaine>`
+The panel is accessible at: `http://<your-ip-or-domain>`
 
 ---
 
-## Personnalisation PHP
+## PHP customization
 
-Le fichier `php.ini` embarqué dans ce dépôt est une version modifiée de celui d'origine, optimisée pour des configs légères. Plusieurs profils sont disponibles selon votre machine :
+The `php.ini` included in this repository is a modified version of the original, optimized for lightweight setups. Several profiles are available depending on your machine:
 
 ```
-web/php/www.conf           ← Configuration de base (2 vCPU / 4 GB)
+web/php/www.conf           ← Base configuration (2 vCPU / 4 GB)
 web/php/www_1v_4gb.conf    ← 1 vCPU / 4 GB
 web/php/www_2v_2gb.conf    ← 2 vCPU / 2 GB
 web/php/www_2v_8gb.conf    ← 2 vCPU / 8 GB
@@ -229,39 +162,37 @@ web/php/www_4v_8gb.conf    ← 4 vCPU / 8 GB
 web/php/www_4v_16gb.conf   ← 4 vCPU / 16 GB
 ```
 
-Pour utiliser un profil, copiez-le en remplacement de `www.conf` avant l'installation, ou remplacez-le manuellement à `/etc/php/8.2/fpm/pool.d/www.conf` après.
+To use a profile, copy it as a replacement for `www.conf` before installation, or replace it manually at `/etc/php/8.2/fpm/pool.d/www.conf` afterwards.
 
 ---
 
-## Testé avec
+## Tested on
 
 - **OVH** — VPS SSD (1 vCPU / 2 GB)
 - **Hetzner** — CX11 / CX21
 - **DigitalOcean** — Droplet Basic
 
-Un test automatisé est effectué sur ces trois hébergeurs à chaque version. Les images Ubuntu de base varient selon les providers — si vous rencontrez une erreur, ouvrez une issue avec les logs.
+---
+
+## Important notes
+
+- This installer is independent from the official AzuraCast project. **Do not contact the AzuraCast team for issues related to this installer.**
+- The official team only supports the Docker version.
+- This fork is maintained for personal use with targeted modifications (primarily the AutoDJ).
+- Pheme is based on AzuraCast — for panel documentation, refer to [docs.azuracast.com](https://docs.azuracast.com).
 
 ---
 
-## Notes importantes
+## License
 
-- Cet installeur est indépendant du projet AzuraCast officiel. **Ne contactez pas l'équipe AzuraCast pour des problèmes liés à cet installeur.**
-- L'équipe officielle supporte uniquement la version Docker.
-- Ce fork est maintenu pour un usage personnel avec des modifications ciblées (principalement l'AutoDJ).
-- Pheme est basé sur AzuraCast — pour la documentation fonctionnelle du panel, référez-vous à [docs.azuracast.com](https://docs.azuracast.com).
-
----
-
-## Licence
-
-GPL-3.0 — voir [LICENSE](LICENSE)
+GPL-3.0 — see [LICENSE](LICENSE)
 
 ---
 
 <div align="center">
 
-*"φήμη — la voix qui se répand, la parole que le vent porte."*
+*"φήμη — the voice that spreads, the word the wind carries."*
 
-**[Signaler un bug](https://github.com/ashd0wn/Pheme-Installer/issues)** · **[AzuraCast upstream](https://github.com/AzuraCast/AzuraCast)**
+**[Report a bug](https://github.com/ashd0wn/pheme-installer/issues)** · **[AzuraCast upstream](https://github.com/AzuraCast/AzuraCast)**
 
 </div>

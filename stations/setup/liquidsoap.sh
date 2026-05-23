@@ -14,7 +14,7 @@ apt_get_with_lock install -y --no-install-recommends "${PACKAGES[@]}"
 # Liquidsoap 2.2.5 — dernière version 2.2.x compatible avec Pheme/AzuraCast 0.19.1
 # Liquidsoap 2.4.x introduit des breaking changes (paramètre synchronous obligatoire)
 # qui nécessitent des modifications du code PHP pour être supportés
-LIQUIDSOAP_VERSION="2.2.5"
+LIQUIDSOAP_VERSION="2.2.4"
 ARCHITECTURE=$(dpkg --print-architecture | awk -F- '{ print $NF }')
 UBUNTU_CODENAME=$(lsb_release -cs 2>/dev/null || echo "noble")
 
