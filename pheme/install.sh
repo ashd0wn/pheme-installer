@@ -4,7 +4,6 @@
 # setup_pheme_install
 ##############################################################################
 
-# Charger les credentials depuis le fichier généré par install.sh
 source "$installerHome/.pheme_credentials"
 
 # Clone and checkout Pheme stable branch
@@ -18,8 +17,8 @@ SUEOF
 find /var/pheme/www -type d -exec chmod 755 {} \;
 find /var/pheme/www -type f -exec chmod 644 {} \;
 
-# Écrire env.ini
-cat > /var/pheme/env.ini << ENVEOF
+# Écrire env.ini dans /var/pheme/www/ (là où AppFactory le cherche)
+cat > /var/pheme/www/env.ini << ENVEOF
 
 ;
 ; Pheme Environment Settings
@@ -34,14 +33,12 @@ MYSQL_DB = $PHEME_DB_NAME
 MYSQL_PASSWORD = $PHEME_DB_PASS
 ENVEOF
 
-chmod 0640 /var/pheme/env.ini
-chown pheme:pheme /var/pheme/env.ini
+chmod 0640 /var/pheme/www/env.ini
+chown pheme:pheme /var/pheme/www/env.ini
 
-# Démarrer Redis
+# Redémarrer Redis et MariaDB via Supervisor uniquement
 supervisorctl restart redis
-
-# Démarrer MariaDB via systemd pour la migration
-systemctl start mariadb
+supervisorctl restart mariadb
 
 # Attendre que MariaDB soit prêt
 echo -en "\n- Attente MariaDB...\n"
@@ -53,19 +50,8 @@ for i in $(seq 1 30); do
     sleep 1
 done
 
-# Lancer la migration en injectant les credentials directement
-MYSQL_HOST=localhost \
-MYSQL_PORT=3306 \
-MYSQL_USER="$PHEME_DB_USER" \
-MYSQL_DB="$PHEME_DB_NAME" \
-MYSQL_PASSWORD="$PHEME_DB_PASS" \
-APPLICATION_ENV=production \
+# Lancer la migration
 php /var/pheme/www/bin/console pheme:setup:migrate
-
-# Passer le relais à Supervisor
-systemctl stop mariadb
-sleep 2
-supervisorctl start mariadb
 
 # Build frontend
 echo -en "\n- Build Pheme\n"
